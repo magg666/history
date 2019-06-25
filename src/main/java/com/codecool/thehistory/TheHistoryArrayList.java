@@ -1,9 +1,7 @@
 package com.codecool.thehistory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class TheHistoryArrayList implements TheHistory {
     /**
@@ -13,32 +11,63 @@ public class TheHistoryArrayList implements TheHistory {
 
     @Override
     public void add(String text) {
+        String[] textWithoutUnnecessarySigns =
+                text
+                        .replace("\n", " ")
+                        .replace("\t", " ")
+                        .trim()
+                        .replaceAll(" +", " ")
+                        .split(" ");
+        Collections.addAll(wordsArrayList, textWithoutUnnecessarySigns);
+
+
         //TODO: check the TheHistory interface for more information
     }
 
     @Override
     public void removeWord(String wordToBeRemoved) {
+        wordsArrayList.removeIf(wordToBeRemoved::equals);
         //TODO: check the TheHistory interface for more information
     }
 
     @Override
     public int size() {
         //TODO: check the TheHistory interface for more information
-        return 0;
+        return wordsArrayList.size();
     }
 
     @Override
     public void clear() {
         //TODO: check the TheHistory interface for more information
+        wordsArrayList.clear();
     }
 
     @Override
     public void replaceOneWord(String from, String to) {
+        ListIterator<String> iterator = wordsArrayList.listIterator();
+
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            if (next.equals(from)) {
+                 iterator.set(to);
+            }
+        }
         //TODO: check the TheHistory interface for more information
     }
 
     @Override
     public void replaceMoreWords(String[] fromWords, String[] toWords) {
+        String fromWordsString = String.join(" ", fromWords);
+        String toWordsString = String.join(" ", toWords);
+
+        String regex = "\\b" + fromWordsString + "\\b";
+        String wordArrayAsString =
+                String
+                        .join(" ", wordsArrayList)
+                        .replaceAll(regex, toWordsString);
+
+        wordsArrayList = Arrays.asList(wordArrayAsString.split(" "));
+
         //TODO: check the TheHistory interface for more information
     }
 

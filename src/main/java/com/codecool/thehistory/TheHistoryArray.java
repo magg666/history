@@ -16,7 +16,7 @@ public class TheHistoryArray implements TheHistory {
                         .replace("\n", " ")
                         .replace("\t", " ")
                         .trim()
-                        .replaceAll(" +", " ");
+                        .replaceAll("\\s+", " ");
 
         String[] parts;
         parts = textWithoutUnnecessarySigns.split("\\s");
