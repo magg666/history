@@ -18,7 +18,16 @@ public class TheHistoryArrayList implements TheHistory {
                         .trim()
                         .replaceAll(" +", " ")
                         .split(" ");
-        Collections.addAll(wordsArrayList, textWithoutUnnecessarySigns);
+
+        // 1.
+//        for(String word: textWithoutUnnecessarySigns){
+//            wordsArrayList.add(word);
+//        }
+        //2.
+        wordsArrayList.addAll(Arrays.asList(textWithoutUnnecessarySigns));
+
+        //3.
+//        Collections.addAll(wordsArrayList, textWithoutUnnecessarySigns);
 
 
         //TODO: check the TheHistory interface for more information
@@ -26,13 +35,30 @@ public class TheHistoryArrayList implements TheHistory {
 
     @Override
     public void removeWord(String wordToBeRemoved) {
-        wordsArrayList.removeIf(wordToBeRemoved::equals);
+        // 1.
+        List<String> freshArrayList = new ArrayList<>();
+        for (String word : wordsArrayList) {
+            if (!word.equals(wordToBeRemoved)) {
+                freshArrayList.add(word);
+            }
+        }
+        wordsArrayList = freshArrayList;
+
+        // 2.
+//        wordsArrayList.removeIf(wordToBeRemoved::equals);
         //TODO: check the TheHistory interface for more information
     }
 
     @Override
     public int size() {
+        // 1.
+//        int counter = 0;
+//        for(String word: wordsArrayList){
+//            counter ++;
+//        }
+//        return counter;
         //TODO: check the TheHistory interface for more information
+        //2.
         return wordsArrayList.size();
     }
 
@@ -49,7 +75,7 @@ public class TheHistoryArrayList implements TheHistory {
         while (iterator.hasNext()) {
             String next = iterator.next();
             if (next.equals(from)) {
-                 iterator.set(to);
+                iterator.set(to);
             }
         }
         //TODO: check the TheHistory interface for more information
@@ -57,16 +83,31 @@ public class TheHistoryArrayList implements TheHistory {
 
     @Override
     public void replaceMoreWords(String[] fromWords, String[] toWords) {
-        String fromWordsString = String.join(" ", fromWords);
-        String toWordsString = String.join(" ", toWords);
+        List<String> freshList = new ArrayList<>();
 
-        String regex = "\\b" + fromWordsString + "\\b";
-        String wordArrayAsString =
-                String
-                        .join(" ", wordsArrayList)
-                        .replaceAll(regex, toWordsString);
+        int currentIndex = 0;
+        while (currentIndex < wordsArrayList.size()) {
+            if (currentIndex + fromWords.length <= wordsArrayList.size() && Arrays.equals(fromWords, wordsArrayList.subList(currentIndex, currentIndex + fromWords.length).toArray())) {
+                freshList.addAll(Arrays.asList(toWords));
+                currentIndex = currentIndex + fromWords.length;
+            } else {
+                freshList.add(wordsArrayList.get(currentIndex));
+                currentIndex++;
+            }
+        }
+        wordsArrayList = freshList;
 
-        wordsArrayList = Arrays.asList(wordArrayAsString.split(" "));
+
+//        String fromWordsString = String.join(" ", fromWords);
+//        String toWordsString = String.join(" ", toWords);
+//
+//        String regex = "\\b" + fromWordsString + "\\b";
+//        String wordArrayAsString =
+//                String
+//                        .join(" ", wordsArrayList)
+//                        .replaceAll(regex, toWordsString);
+//
+//        wordsArrayList = Arrays.asList(wordArrayAsString.split(" "));
 
         //TODO: check the TheHistory interface for more information
     }

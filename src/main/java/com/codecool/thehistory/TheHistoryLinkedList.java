@@ -1,5 +1,7 @@
 package com.codecool.thehistory;
 
+import sun.awt.util.IdentityLinkedList;
+
 import java.util.*;
 
 public class TheHistoryLinkedList implements TheHistory {
@@ -49,52 +51,90 @@ public class TheHistoryLinkedList implements TheHistory {
 
     @Override
     public void replaceOneWord(String from, String to) {
-        Collections.replaceAll(wordsLinkedList, from, to);
+        for (ListIterator<String> iterator = wordsLinkedList.listIterator(); iterator.hasNext(); ) {
+            if (iterator.next().equals(from)) {
+                iterator.remove();
+                iterator.add(to);
+            }
+        }
+
+//        Collections.replaceAll(wordsLinkedList, from, to);
         //TODO: check the TheHistory interface for more information
     }
 
     @Override
     public void replaceMoreWords(String[] fromWords, String[] toWords) {
+        List<String> freshList = new LinkedList<>();
         int currentIndex = 0;
 
-        while (currentIndex < wordsLinkedList.size()){
-            if (!wordsLinkedList.get(currentIndex).equals(fromWords[0]) || currentIndex + fromWords.length > wordsLinkedList.size()) {
-                currentIndex++;
+        while (currentIndex < wordsLinkedList.size()) {
+            if (currentIndex + fromWords.length <= wordsLinkedList.size()
+                    && Arrays.equals(wordsLinkedList.subList(currentIndex, currentIndex + fromWords.length).toArray(), fromWords)) {
+                freshList.addAll(Arrays.asList(toWords));
+                currentIndex = currentIndex + fromWords.length;
             } else {
-                List<String> newList = wordsLinkedList.subList(currentIndex, currentIndex + fromWords.length);
-                if (!Objects.equals(newList, Arrays.asList(fromWords))) {
-                    currentIndex++;
-                } else {
-                    wordsLinkedList.subList(currentIndex, currentIndex + fromWords.length).clear();
-                    wordsLinkedList.addAll(currentIndex, Arrays.asList(toWords));
-                    currentIndex = currentIndex + toWords.length;
-
-                }
+                ListIterator iterator = wordsLinkedList.listIterator(currentIndex);
+                freshList.add((String) iterator.next());
+                currentIndex++;
             }
         }
+        wordsLinkedList = freshList;
+    }
 
 
+    // 5.92 12.971 12.664
+//        List<String> freshList = new LinkedList<>();
+//        int currentIndex = 0;
+//
+//
+//        while (currentIndex < wordsLinkedList.size()) {
+//            if (currentIndex + fromWords.length <= wordsLinkedList.size()
+//                    && Arrays.equals(wordsLinkedList.subList(currentIndex, currentIndex + fromWords.length).toArray(new String[0]), fromWords)) {
+//                freshList.addAll(Arrays.asList(toWords));
+//                currentIndex = currentIndex + fromWords.length;
+//            } else {
+//                freshList.add(wordsLinkedList.get(currentIndex));
+//                currentIndex++;
+//            }
+//        }
+//        wordsLinkedList = freshList;
+//    }
 
+// 47.512 1m 53.471 2m 10.487
+//        int currentIndex = 0;
+//
+//        while (currentIndex + fromWords.length <= wordsLinkedList.size()) {
+//            String [] newList = wordsLinkedList.subList(currentIndex, currentIndex + fromWords.length).toArray(new String[0]);
+//            if (Arrays.equals(newList, fromWords)) {
+//                wordsLinkedList.subList(currentIndex, currentIndex + fromWords.length).clear();
+//                wordsLinkedList.addAll(currentIndex, Arrays.asList(toWords));
+//                currentIndex = currentIndex + toWords.length;
+//            } else {
+//                currentIndex++;
+//            }
+//        }
+//    }
+
+// 35.866 2m 3.816 1m 46.414
 //        ListIterator<String> wordsIterator = wordsLinkedList.listIterator();
 //        int fromWordsLength = fromWords.length;
 //        int toWordsLength = toWords.length;
-//        String firstFromWords = fromWords[0];
 //        List<String> fromWordsAsList = Arrays.asList(fromWords);
 //        List<String> toWordsAsList = Arrays.asList(toWords);
 //
 //
-//        while (wordsIterator.nextIndex() < wordsLinkedList.size()) {
-//            if (wordsIterator.next().equals(firstFromWords)
-//                    && wordsIterator.previousIndex() + fromWordsLength <= wordsLinkedList.size()
-//                    && Objects.equals(wordsLinkedList.subList(wordsIterator.previousIndex(), wordsIterator.previousIndex() + fromWordsLength), fromWordsAsList)) {
-//                wordsLinkedList.subList(wordsIterator.previousIndex(), wordsIterator.previousIndex() + fromWordsLength).clear();
-//                wordsLinkedList.addAll(wordsIterator.previousIndex(), toWordsAsList);
-//                wordsIterator = wordsLinkedList.listIterator(wordsIterator.previousIndex() + toWordsLength);
+//        while (wordsIterator.nextIndex() + fromWordsLength <= wordsLinkedList.size()) {
+//            if (Objects.equals(wordsLinkedList.subList(wordsIterator.nextIndex(), wordsIterator.nextIndex() + fromWords.length), fromWordsAsList)) {
+//                wordsLinkedList.subList(wordsIterator.nextIndex(), wordsIterator.nextIndex() + fromWords.length).clear();
+//                wordsLinkedList.addAll(wordsIterator.nextIndex(), toWordsAsList);
+//                wordsIterator = wordsLinkedList.listIterator(wordsIterator.nextIndex() + toWordsLength);
 //
+//            } else {
+//                wordsIterator.next();
 //            }
 //        }
 
-
+// 10.426 25.522 25.617
 //        List<String> freshList = new LinkedList<>();
 //
 //        int currentIndex = 0;
@@ -120,7 +160,7 @@ public class TheHistoryLinkedList implements TheHistory {
 
 
     //TODO: check the TheHistory interface for more information
-    }
+//    }
 
     @Override
     public String toString() {
